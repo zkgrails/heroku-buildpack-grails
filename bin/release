@@ -3,6 +3,8 @@
 
 BUILD_DIR=$1
 
+GRAILS_VERSION=$(get_property $BUILD_DIR/.grails/build.properties 'grails.version')
+
 cat <<EOF
 ---
 config_vars:
@@ -12,5 +14,5 @@ addons:
 
 default_process_types:
   web:      java \$JAVA_OPTS -jar server/jetty-runner.jar --port \$PORT target/*.war 
-
+  grails:   curl --silent http://s3.amazonaws.com/heroku-jvm-buildpack-grails/grails-$GRAILS_VERSION.tar.gz | tar -xz && export JAVA_HOME=/usr/lib/jvm/java-6-openjdk && export GRAILS_OPTS='-server -XX:PermSize=256m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8' && .grails/bin/grails
 EOF
